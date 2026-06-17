@@ -1,0 +1,60 @@
+from fastapi import FastAPI
+
+from app.api.routes import academic, assignments, attendance, auth, bonus, dashboards, enrollments, final_projects, grades, health, materials, notifications, progress, quizzes, ranking, users
+from app.core.config import settings
+from app.core.exceptions import register_exception_handlers
+
+
+def create_app() -> FastAPI:
+    app = FastAPI(title=settings.app_name)
+    register_exception_handlers(app)
+    app.include_router(health.router)
+    app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
+    app.include_router(users.router, prefix="/api/users", tags=["Users"])
+    app.include_router(academic.branches_router, prefix="/api/branches", tags=["Branches"])
+    app.include_router(academic.cycles_router, prefix="/api/cycles", tags=["Cycles"])
+    app.include_router(academic.tracks_router, prefix="/api/tracks", tags=["Tracks"])
+    app.include_router(academic.levels_router, prefix="/api/levels", tags=["Levels"])
+    app.include_router(academic.classes_router, prefix="/api/classes", tags=["Classes"])
+    app.include_router(academic.teachers_router, prefix="/api/teachers", tags=["Teachers"])
+    app.include_router(enrollments.enrollments_router, prefix="/api/enrollments", tags=["Enrollments"])
+    app.include_router(enrollments.teacher_students_router, prefix="/api/teachers", tags=["Teachers"])
+    app.include_router(enrollments.student_class_router, prefix="/api/students", tags=["Students"])
+    app.include_router(materials.materials_router, prefix="/api/materials", tags=["Materials"])
+    app.include_router(materials.teacher_materials_router, prefix="/api/teachers", tags=["Teachers"])
+    app.include_router(materials.student_materials_router, prefix="/api/students", tags=["Students"])
+    app.include_router(assignments.assignments_router, prefix="/api/assignments", tags=["Assignments"])
+    app.include_router(assignments.students_router, prefix="/api/students", tags=["Students"])
+    app.include_router(assignments.teachers_router, prefix="/api/teachers", tags=["Teachers"])
+    app.include_router(assignments.submissions_router, prefix="/api/assignment-submissions", tags=["Assignment Submissions"])
+    app.include_router(grades.grades_router, prefix="/api/grade-entries", tags=["Grade Entries"])
+    app.include_router(grades.students_router, prefix="/api/students", tags=["Students"])
+    app.include_router(grades.teachers_router, prefix="/api/teachers", tags=["Teachers"])
+    app.include_router(grades.admin_router, prefix="/api/admin", tags=["Admin"])
+    app.include_router(attendance.attendance_router, prefix="/api/attendance", tags=["Attendance"])
+    app.include_router(attendance.teachers_router, prefix="/api/teachers", tags=["Teachers"])
+    app.include_router(attendance.students_router, prefix="/api/students", tags=["Students"])
+    app.include_router(quizzes.quizzes_router, prefix="/api/quizzes", tags=["Quizzes"])
+    app.include_router(quizzes.quiz_results_router, prefix="/api/quiz-results", tags=["Quiz Results"])
+    app.include_router(quizzes.teachers_router, prefix="/api/teachers", tags=["Teachers"])
+    app.include_router(quizzes.students_router, prefix="/api/students", tags=["Students"])
+    app.include_router(bonus.bonus_router, prefix="/api/bonus", tags=["Bonus"])
+    app.include_router(bonus.students_router, prefix="/api/students", tags=["Students"])
+    app.include_router(bonus.teachers_router, prefix="/api/teachers", tags=["Teachers"])
+    app.include_router(progress.students_router, prefix="/api/students", tags=["Students"])
+    app.include_router(progress.teachers_router, prefix="/api/teachers", tags=["Teachers"])
+    app.include_router(progress.progress_router, prefix="/api/progress", tags=["Progress"])
+    app.include_router(ranking.students_router, prefix="/api/students", tags=["Students"])
+    app.include_router(ranking.teachers_router, prefix="/api/teachers", tags=["Teachers"])
+    app.include_router(ranking.ranking_router, prefix="/api/ranking", tags=["Ranking"])
+    app.include_router(final_projects.students_router, prefix="/api/students", tags=["Students"])
+    app.include_router(final_projects.teachers_router, prefix="/api/teachers", tags=["Teachers"])
+    app.include_router(final_projects.final_projects_router, prefix="/api/final-projects", tags=["Final Projects"])
+    app.include_router(notifications.router, prefix="/api/admin", tags=["Admin Notifications"])
+    app.include_router(dashboards.admin_router, prefix="/api/admin", tags=["Dashboards"])
+    app.include_router(dashboards.teachers_router, prefix="/api/teachers", tags=["Dashboards"])
+    app.include_router(dashboards.students_router, prefix="/api/students", tags=["Dashboards"])
+    return app
+
+
+app = create_app()

@@ -1,0 +1,10 @@
+{
+  "name": "final-ica-fullstack",
+  "private": true,
+  "scripts": {
+    "frontend:dev": "npm --prefix Front_End run dev",
+    "frontend:build": "npm --prefix Front_End run build",
+    "frontend:lint": "npm --prefix Front_End run lint",
+    "backend:docker": "cd Back_End && docker compose up --build"
+  }
+}

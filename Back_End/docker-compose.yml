@@ -1,0 +1,51 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ica
+      POSTGRES_PASSWORD: ica
+      POSTGRES_DB: ica
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ica -d ica"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    environment:
+      APP_NAME: ICA Management System
+      ENVIRONMENT: docker
+      DATABASE_URL: postgresql+asyncpg://ica:ica@db:5432/ica
+      JWT_SECRET_KEY: change-this-secret-in-production-minimum-32-bytes
+      DEFAULT_ADMIN_EMAIL: admin@ica.eg
+      DEFAULT_ADMIN_PASSWORD: Admin@123456
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  tests:
+    build: .
+    command: sh -c "python -m app.ensure_test_database && alembic upgrade head && pytest"
+    environment:
+      APP_NAME: ICA Management System
+      ENVIRONMENT: test
+      DATABASE_URL: postgresql+asyncpg://ica:ica@db:5432/ica_test
+      JWT_SECRET_KEY: test-secret-minimum-32-bytes-long
+      DEFAULT_ADMIN_EMAIL: admin@ica.eg
+      DEFAULT_ADMIN_PASSWORD: Admin@123456
+    depends_on:
+      db:
+        condition: service_healthy
+    profiles:
+      - test
+
+volumes:
+  postgres_data:
